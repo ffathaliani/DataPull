@@ -28,3 +28,18 @@ df = spark.read.csv('/Users/Ramin/Desktop/DataPull/movielens_ratings.csv', infer
 
 df.show()
 
+df.describe().show()
+
+train_data, test_data = df.randomSplit([0.8, 0.2])
+
+als = ALS(maxIter=5, regParam=0.01, userCol='userID', itemCol='movieId', ratingCol='rating')
+
+model = als.fit(train_data)
+
+predictions = model.transform(test_data)
+
+predictions.show()
+
+
+
+
