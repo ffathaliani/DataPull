@@ -32,7 +32,7 @@ df.describe().show()
 
 train_data, test_data = df.randomSplit([0.8, 0.2])
 
-als = ALS(maxIter=5, regParam=0.01, userCol='userID', itemCol='movieId', ratingCol='rating')
+als = ALS(maxIter=5, regParam=0.01, userCol='userId', itemCol='movieId', ratingCol='rating')
 
 model = als.fit(train_data)
 
@@ -40,6 +40,21 @@ predictions = model.transform(test_data)
 
 predictions.show()
 
+evaluator = RegressionEvaluator(metricName='rmse', labelCol='rating', predictionCol='prediction')
+rmse = evaluator.evaluate(predictions)
+
+
+print('RMSE is: ')
+print(rmse)
+
+single_user = test_data.filter(test_data["userId"] == 11).select(['movieId', 'userId'])
+
+
+single_user.show()
+
+recommendations = model.transform(single_user)
+
+recommendations.orderBy('prediction', ascending=False).show()
 
 
 
